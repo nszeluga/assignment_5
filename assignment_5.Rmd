@@ -16,73 +16,7 @@ library(knitr)
 
 <br>
 
-## Exercise 1. Tibble and Data Import (OPTIONAL)
 
-Import data frames listed below into R and
-[parse](https://r4ds.had.co.nz/data-import.html#parsing-a-vector) the
-columns appropriately when needed. Watch out for the formating oddities
-of each dataset. Print the results with
-`kable()`.
-
-<br>
-
-#### 1.1 Create the following tibble manually, first using `tribble()` and then using `tibble()`. Print both results.
-
-`tribble()`:
-
-| a |   b | c       |
-| -: | --: | :------ |
-| 1 | 2.1 | apple   |
-| 2 | 3.2 | orrange |
-
-`tibble()`:
-
-| a |   b | c       |
-| -: | --: | :------ |
-| 1 | 2.1 | apple   |
-| 2 | 3.2 | orrange |
-
-<br>
-
-#### 1.2 Import `https://raw.githubusercontent.com/nt246/NTRES6940-data-science/master/datasets/dataset2.txt` into R. Change the column names into “Name”, “Weight”, “Price”.
-
-| Name   | Weight | Price |
-| :----- | -----: | ----: |
-| apple  |      1 |   2.9 |
-| orange |      2 |   4.9 |
-| durian |     10 |  19.9 |
-
-<br>
-
-#### 1.3 Import `https://raw.githubusercontent.com/nt246/NTRES6940-data-science/master/datasets/dataset3.txt` into R. Watch out for the first few lines, missing values, separators, quotation marks, and deliminaters.
-
-| Name   | Weight | Price |
-| :----- | -----: | ----: |
-| apple  |      1 |   2.9 |
-| orange |      2 |    NA |
-| durian |     NA |  19.9 |
-
-<br>
-
-#### 1.4 Import `https://raw.githubusercontent.com/nt246/NTRES6940-data-science/master/datasets/dataset4.txt` into R. Watch out for comments, units, and decimal marks (which are `,` in this case).
-
-| Name   | Weight | Price |
-| :----- | -----: | ----: |
-| apple  |      1 |   2.9 |
-| orange |      2 |   4.9 |
-| durian |     10 |  19.9 |
-
-<br>
-
-#### 1.5 Import `https://raw.githubusercontent.com/nt246/NTRES6940-data-science/master/datasets/dataset5.txt` into R. Parse the columns properly. Write this imported and parsed data frame into a new csv file named `dataset5_new.csv` in your `problem_sets` folder.
-
-| Name   | Expiration Date | Time     |
-| :----- | :-------------- | :------- |
-| apple  | 2018-09-26      | 01:00:00 |
-| orange | 2018-10-02      | 13:00:00 |
-| durian | 2018-10-21      | 11:00:00 |
-
-<br>
 
 ## Exercise 2. Weather station
 
@@ -358,116 +292,58 @@ I notice that more babies survived than died and more elderly died.
 
 #### 3.7 In this dataset, the Fare variable does not represent the fare per person. Instead, each ticket number has a corresponding fare, and some passengers share one single ticket number. Therefore, the Fare variable is the total fare for a group of passengers sharing the same ticket number. Knowing this, calculate the average fare per person. (You don’t need to show a table or a figure for this question, just show the code for the calculation)
 
-``` r
-## Write your code here
+```{r}
+titanic %>% 
+  group_by(Ticket) %>% 
+  summarise("meanFare" = mean(Fare)) %>% 
+  group_by() %>% 
+  summarise("AverageFare" = mean(meanFare))
+
 ```
 
-<span style="color:blue"> Write your response here
-</span>
+
+I got the average fare per person to be 23.27
 
 <br>
 
 #### 3.8 Show the distribution of the number of family members (including siblings, spouses, parents, and children) that each passenger was accompanied by. Were most passengers travelling solo or with family?
 
-``` r
-## Write your code here
+```{r}
+hist(titanic$SibSp) 
+
+```
+```{r}
+hist(titanic$Parch)
 ```
 
-<span style="color:blue"> Write your response here
-</span>
+
+My histograms show that most passengers were traveling alone. 
 
 <br>
 
 #### 3.9 Which ticket class did most of the largest families get? And which ticket class has the lowest proportion of female passengers who travelled solo out of all the female passengers in that class?
 
-``` r
-## Write your code here
+```{r}
+titanic %>% 
+  mutate(titanic,'Family' = SibSp + Parch) %>% 
+  ggplot(, mapping = aes(x = Pclass, y = Family))+
+  geom_bar(stat = "identity")
 ```
 
-<span style="color:blue"> Write your response here
-</span>
+
+I find that people with the most family are in the 3rd class. 
 
 <br>
 
 #### 3.10 Do the port of embarkation matter for the survival rates of passengers? Why might this be the case?
 
-``` r
-## Write your code here
+```{r}
+ggplot(data = titanic, mapping = aes( y= Survived, x = Embarked)) +
+  geom_bar(stat = "identity")
 ```
 
-<span style="color:blue"> Write your response here </span>
 
-<br>
+More people survived that embarked on Southampton. This could be because a larger number of overall people embarked here.Maybe it was a larger port. 
 
-## Exercise 4. Camera data (OPTIONAL)
 
-This dataset contains information on 1038 camera models. It was obtained
-from the following website:
-<https://perso.telecom-paristech.fr/eagan/class/igr204/>
 
-<br>
-
-#### 4.1 Import `https://raw.githubusercontent.com/nt246/NTRES6940-data-science/master/datasets/camera.csv` to R. You will see that the `Model` columns contains both the brand names and model names of cameras. Split this column into two, one with brand name, and the other with model name, as shown below. Print the first 6 rows of the new data frame. (Hint: check the merge argument in `separate()`)
-
-| Brand | Model              | Release date | Max resolution | Low resolution | Effective pixels | Zoom wide (W) | Zoom tele (T) | Normal focus range | Macro focus range | Storage included | Weight (inc. batteries) | Dimensions | Price |
-| :---- | :----------------- | -----------: | -------------: | -------------: | ---------------: | ------------: | ------------: | -----------------: | ----------------: | ---------------: | ----------------------: | ---------: | ----: |
-| Agfa  | ePhoto 1280        |         1997 |           1024 |            640 |                0 |            38 |           114 |                 70 |                40 |                4 |                     420 |         95 |   179 |
-| Agfa  | ePhoto 1680        |         1998 |           1280 |            640 |                1 |            38 |           114 |                 50 |                 0 |                4 |                     420 |        158 |   179 |
-| Agfa  | ePhoto CL18        |         2000 |            640 |              0 |                0 |            45 |            45 |                  0 |                 0 |                2 |                       0 |          0 |   179 |
-| Agfa  | ePhoto CL30        |         1999 |           1152 |            640 |                0 |            35 |            35 |                  0 |                 0 |                4 |                       0 |          0 |   269 |
-| Agfa  | ePhoto CL30 Clik\! |         1999 |           1152 |            640 |                0 |            43 |            43 |                 50 |                 0 |               40 |                     300 |        128 |  1299 |
-| Agfa  | ePhoto CL45        |         2001 |           1600 |            640 |                1 |            51 |            51 |                 50 |                20 |                8 |                     270 |        119 |   179 |
-
-<br>
-
-#### 4.2 Many model names start with a name for the product line, which is then followed by a name for the particular model. Select all Canon cameras, and further split the model names into product line names (in this case, they are either “Powershot” or “EOS”) and model names. Show the first 6 lines of this new data frame. (Hint: notice that there are more than one possible separators)
-
-| Brand | Line      | Model | Release date | Max resolution | Low resolution | Effective pixels | Zoom wide (W) | Zoom tele (T) | Normal focus range | Macro focus range | Storage included | Weight (inc. batteries) | Dimensions | Price |
-| :---- | :-------- | :---- | -----------: | -------------: | -------------: | ---------------: | ------------: | ------------: | -----------------: | ----------------: | ---------------: | ----------------------: | ---------: | ----: |
-| Canon | PowerShot | 350   |         1997 |            640 |              0 |                0 |            42 |            42 |                 70 |                 3 |                2 |                     320 |         93 |   149 |
-| Canon | PowerShot | 600   |         1996 |            832 |            640 |                0 |            50 |            50 |                 40 |                10 |                1 |                     460 |        160 |   139 |
-| Canon | PowerShot | A10   |         2001 |           1280 |           1024 |                1 |            35 |           105 |                 76 |                16 |                8 |                     375 |        110 |   139 |
-| Canon | PowerShot | A100  |         2002 |           1280 |           1024 |                1 |            39 |            39 |                 20 |                 5 |                8 |                     225 |        110 |   139 |
-| Canon | PowerShot | A20   |         2001 |           1600 |           1024 |                1 |            35 |           105 |                 76 |                16 |                8 |                     375 |        110 |   139 |
-| Canon | PowerShot | A200  |         2002 |           1600 |           1024 |                1 |            39 |            39 |                 20 |                 5 |                8 |                     225 |        110 |   139 |
-
-<br>
-
-#### 4.3 Explore the full dataset (and some subsetted ones if you are interested) on your own using **a variety of the skills** that you have learned in this class so far (i.e. data visualization, transformation, and exploration). Come up with **at least 3 interesting findings or potential hypotheses**.
-
-<br>
-
-###### 4.3.1
-
-``` r
-## Write your code here
-```
-
-<span style="color:blue"> Write your response here </span>
-
-<br>
-
-###### 4.3.2
-
-``` r
-## Write your code here
-```
-
-<span style="color:blue"> Write your response here </span>
-
-<br>
-
-###### 4.3.3
-
-``` r
-## Write your code here
-```
-
-<span style="color:blue"> Write your response here
-</span>
-
-<br>
-
-###### Don’t hesitate to continue writing if you have more than 3 interesting findings.
-
-<br>
