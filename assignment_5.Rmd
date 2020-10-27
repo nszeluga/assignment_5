@@ -327,7 +327,7 @@ hist(titanic$Age)
 
 ```{r}
 ggplot(data = titanic, mapping = aes(x = Pclass, y = Age, color= Sex)) +
-  geom_bar(stat = "identity", na.rm = TRUE, position = "dodge")
+  geom_histogram(stat = "identity", na.rm = TRUE, position = "dodge")
 ```
 
 
@@ -337,12 +337,22 @@ I do not see any trend.
 
 #### 3.6 What is the age distribution of passengers who survived vs. those who did not? What hypothesis can you come up with when comparing these two distributions?
 
-``` r
-## Write your code here
+```{r}
+titanic %>% 
+  filter(Survived == "1") %>% 
+  ggplot(, mapping = aes(x = Age, fill = Survived))+
+  geom_histogram(bins = 30, position = "dodge", na.rm = TRUE)
+
+```
+```{r}
+titanic %>% 
+  filter(Survived == "0") %>% 
+  ggplot(, mapping = aes(x = Age, fill = Survived))+
+  geom_histogram(bins = 30, position = "dodge", na.rm = TRUE)
 ```
 
-<span style="color:blue"> Write your response here
-</span>
+I notice that more babies survived than died and more elderly died.
+
 
 <br>
 

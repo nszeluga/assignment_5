@@ -513,8 +513,10 @@ the most part, the age distribution is a bell curve. The highest between
 
 ``` r
 ggplot(data = titanic, mapping = aes(x = Pclass, y = Age, color= Sex)) +
-  geom_bar(stat = "identity", na.rm = TRUE, position = "dodge")
+  geom_histogram(stat = "identity", na.rm = TRUE, position = "dodge")
 ```
+
+    ## Warning: Ignoring unknown parameters: binwidth, bins, pad
 
 ![](assignment_5_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
@@ -525,10 +527,24 @@ I do not see any trend.
 #### 3.6 What is the age distribution of passengers who survived vs. those who did not? What hypothesis can you come up with when comparing these two distributions?
 
 ``` r
-## Write your code here
+titanic %>% 
+  filter(Survived == "1") %>% 
+  ggplot(, mapping = aes(x = Age, fill = Survived))+
+  geom_histogram(bins = 30, position = "dodge", na.rm = TRUE)
 ```
 
-<span style="color:blue"> Write your response here </span>
+![](assignment_5_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+``` r
+titanic %>% 
+  filter(Survived == "0") %>% 
+  ggplot(, mapping = aes(x = Age, fill = Survived))+
+  geom_histogram(bins = 30, position = "dodge", na.rm = TRUE)
+```
+
+![](assignment_5_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+I notice that more babies survived than died and more elderly died.
 
 <br>
 
